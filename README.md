@@ -1,4 +1,4 @@
-# diversity-productivity-reforestation
+# diversity-productivity-reforestation [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3258927.svg)](https://doi.org/10.5281/zenodo.3258927)
 Code used to generate results, figures and tables for DOI: 10.1111/geb.12962
 
 This project uses **forest inventory data** and **plant functional trait data**, processing them in **R scripts** to generate results and figures.
