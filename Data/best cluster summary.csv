@@ -1,0 +1,9 @@
+cluster,name,full.name,category,System,red,green,blue,color.name,Aridity,code
+1,Dry woodlands,Dry woodlands,Mallee/Woodland,Semi+AC0-arid,0.702,0.059,0.075,red,0.32,DW
+2,Wet woodlands,Wet woodlands,Woodland,Sclerophyll,0.58,0.918,0.216,lightey apple green,0.58,WW
+3,Coastal forests,Coastal forests,Forest,Temperate,0.09,0.455,0.353,teal,0.67,CF
+4,Temperate forests,Temperate forests,Forest,Temperate,0.192,0.298,0.639,Deepy blue,0.66,TF
+5,Sub+AC0-tr. woodlands,Sub+AC0-tropical woodlands,Woodland,Sclerophyll,0.302,0.235,0,brown,0.47,SW
+6,Medit. woodlands,Mediterranean woodlands,Mallee,Semi+AC0-arid,0.412,0.482,0.082,orange,0.32,MW
+7,Arid woodlands,Arid woodlands,Mallee,Semi+AC0-arid,0.706,0.486,0.059,burnt gold,0.2,SaW
+8,Tropical rainforests,Tropical rainforests,Forest,Tropical,0.141,0.557,0.118,brightey green,1.27,TrF
