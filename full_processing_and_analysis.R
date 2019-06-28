@@ -1,8 +1,10 @@
-#################################################   ####
-# Code goal: Evaluate all richness and trait models ####
-# Author:    Tim Staples                            ####
-# Date:      02/09/2015                             ####  
-################################################### ####
+# #################################################################### ####
+# Title: Productivity does not correlate with species and functional   ####
+#        diversity in Australian reforestation plantings across a wide ####
+#        climate gradient                                              #### 
+# Author: Timothy L Staples                                            ####
+# Details: Minimal code to reproduce results and figures               ####  
+# #################################################################### ####
 # Libraries ####
 rm(list=ls())
 library(raster) # for environmental rasters
@@ -21,7 +23,7 @@ library(multcomp) # for glht
 library(geoR) # for variogram
 library(plotrix) # for gradient rectangles in plots
 
-setwd("/home/timothy/Dropbox/Tim/PhD/Data/diversity-productivity-reforestation/")
+setwd("LOCATION OF THIS SCRIPT")
 # Global functions ####
 sapply(list.files(path="./Functions", pattern=".R", full.names=TRUE),
        source)
@@ -45,8 +47,7 @@ unique(site$planting[is.na(match(site$planting, plant$planting))])
 
 #             EXTRACT ENVIRONMENTAL CONDITIONS AT PLOTS ####
 
-shape.file.dir<-paste(ifelse(Sys.info()['sysname']=="Linux", "/home/Storage HDD/", "F:/"),
-            "University files/Shape files", sep="")
+shape.file.dir<-paste("SPATIAL LAYER LOCATION")
 
 data.coords<-as.data.frame(cbind(site$long, site$lat))
 colnames(data.coords)<-c("Longitude","Latitude")
@@ -2713,374 +2714,6 @@ plot(mixed.site.sub$SM.cwm  ~ jitter(mixed.site.sub$best.cluster,
 colnames(mixed.site.sub)
 
 
-# old trait plot ####
-cluster.df<-read.csv("./Data/best cluster summary.csv", header=TRUE)
-trait.coefs<-coefTable(trait.env.model.nomono)[-1,]
-position<-17-c(4,5,6,7, # Mass ratio
-               1,2,3, # FD
-               14,12,13,15,16,
-               8,10,9,11,
-               13.5)
-labels=rownames(trait.coefs)
-
-cbind(trait.coefs, position)
-
-labels=c("SLA CWM", "Wood density CWM", "Seed mass CWM", "Max height CWM",
-         "Functional range", "Functional evenness", "Functional divergence",
-         "Age (years)", expression("Density (stems ha"^"-1"*")"),
-         expression("Min. temp ("*degree*"C)"), "Aridity index",
-         "Sand (%)", 
-         "SLA CWM:Age", "Seed mass CWM:Density",
-         "SLA CWM:Min. temp", "Seed mass CWM:Age",
-         "Age:Min. temp")
-         
-pdf(paste0("./Plots/Trait coefficients ", Sys.Date(),".pdf"), 
-    height=7, width=10.5, useDingbats=FALSE)
-
-framemat<-rbind(c(0.15,0.45,0.1,0.95), # Coef
-                c(0.51,0.67,0.725,0.95), # Int 1
-                c(0.73,0.89,0.725,0.95), # Int 2
-                c(0.51,0.67,0.425,0.65), # Int 3
-                c(0.73,0.89,0.425,0.65), # Int 4
-                
-                c(0.91,0.93,0.5,0.8), # Int gradient
-                c(0.51,0.73,0.1,0.35), # Cluster 1
-                c(0.73,0.95,0.1,0.35), # Cluster 2
-                c(0.005,0.995,0.03,0.98)) # Box
-
-split.screen(framemat)
-
-#                             COEFFICIENT PLOT ####
-
-screen(1)
-par(mar=c(0,0,0,0), las=1, tck=-0.02, mgp=c(3,0.2,0), ps=8)
-plot(position ~ trait.coefs[,1], xlim=c(-0.3,0.55), type="n", axes=FALSE,
-     xlab="", ylab="")
-rect(xleft=par("usr")[1], xright=par("usr")[2], ybottom=par("usr")[3], ytop=par("usr")[4],
-     border=NA, col="white")
-
-text(x=0.4, y=15, label="Functional\ndiversity", 
-     font=2, col="grey60")
-
-rect(xleft=-1, xright=1,
-     ytop=13.5, ybottom=9.5, col="grey90", 
-     border=NA)
-text(x=0.4, y=11.5, label="Mass ratio", 
-     font=2, col="grey60")
-
-text(x=0.4, y=7.5, label="Mass ratio\nx\nEnvironment\nand structure", 
-     font=2, col="grey60")
-
-rect(xleft=-1, xright=1,
-     ytop=5.5, ybottom=0, col="grey90", 
-     border=NA)
-text(x=-0.175, y=2, label="Environment\nand structure", 
-     font=2, col="grey60")
-
-points(position ~ trait.coefs[,1], pch=16, cex=0.75,
-       col=c(rep("black", 12), rep("grey50", 5)))
-
-text(position[c(1,2)]+0.252 ~ trait.coefs[c(1,2),1], 
-     labels=c("(f)","(g)"),
-     col="black")
-
-text(position[13:16]+0.225 ~ trait.coefs[13:16,1], 
-     labels=c("(b)","(d)","(c)","(e)"), col="grey50")
-
-box()
-segments(x0=0, x1=0, y0=0, y1=18, lty="dashed")
-segments(y0=position, y1=position,
-         x0=trait.coefs[,1]-1.98*trait.coefs[,2],
-         x1=trait.coefs[,1]+1.98*trait.coefs[,2],
-         col=c(rep("black", 12), rep("grey50", 5)))
-
-axis(side=1, mgp=c(3,0.2,0))
-axis(side=2, at=position[1:12], labels=labels[1:12], las=1, mgp=c(3,0.5,0))
-axis(side=2, at=position[13:17], labels=labels[13:17], las=1, 
-     col.axis="grey50", col.ticks="grey50", mgp=c(3,0.5,0))
-mtext(side=1, text="Standardised effect size", line=0.9)
-
-text(x=relative.axis.point(0.05, "x"), 
-     y=relative.axis.point(0.975, "y"),
-     labels="(a)", font=2, cex=1.25)
-close.screen(1)
-
-#                             INTERACTION PLOTS ####
-
-screen(2)
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.02, mgp=c(3,0.4,0))
-temp.inter.list<-interaction.matrix.fun(trait.env.model.nomono, 
-                                        x="SLA.cwm", y="log.age", 
-                                        grid.size=150, quantile=0.01)
-image(temp.inter.list, zlim=c(8.4,12.3),
-      col=colorRampPalette(c(rgb(0.95,1,0.95,1),"darkseagreen1","darkgreen"))(150), axes=F, las=1)
-
-contour(x=temp.inter.list,add=T, 
-        levels=log(c(25, 50, 75, 100, 125, 150)*1000),
-        labels=c(25, 50, 75, 100, 125, 150),
-        method="edge", lwd=0.5)
-
-axis(side=1, mgp=c(3,0,0), at=(c(1.5,2,2.5,3,3.5,4)-mean(mixed.site.sub$SLA.cwm))/
-                               sd(mixed.site.sub$SLA.cwm),
-     labels=c(1.5,2,2.5,3,3.5,4))
-mtext(side=1, text=expression("ln(SLA (mm"^"2"*" g"^"-1"*")) CWM"), line=0.85)
-
-axis(side=2, at=(log(c(5,10,15,25))-mean(mixed.site.sub$log.age))/sd(mixed.site.sub$log.age),
-     labels=c(5,10,15,25))
-mtext(side=2, text="Age (years)", line=1.25, las=0)
-
-mtext(side=3, at=relative.axis.point(0, "x"), text="(b)", font=2, 
-      line=0, cex=1.25)
-box()
-close.screen(2)
-
-screen(3)
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.02, mgp=c(3,0.4,0))
-temp.inter.list<-interaction.matrix.fun(trait.env.model.nomono, 
-                                        "SLA.cwm", "tmin.annual",
-                                        grid.size=150, quantile=0.05)
-image(temp.inter.list, zlim=c(8.4,12.3),
-      col=colorRampPalette(c(rgb(0.95,1,0.95,1),"darkseagreen1","darkgreen"))(150), axes=F, las=1)
-
-#with(trait.env.model.nomono$data, points(tmin.annual ~ SLA.cwm))
-
-contour(x=temp.inter.list,add=T, 
-        levels=log(c(25, 50, 75, 100, 125, 150)*1000),
-        labels=c(25, 50, 75, 100, 125, 150),
-        method="edge", lwd=0.5)
-
-axis(side=1, mgp=c(3,0,0), at=(c(1.5,2,2.5,3,3.5,4)-mean(mixed.site.sub$SLA.cwm))/
-       sd(mixed.site.sub$SLA.cwm),
-     labels=c(1.5,2,2.5,3,3.5,4))
-mtext(side=1, text=expression("ln(SLA (mm"^"2"*" g"^"-1"*")) CWM"), line=0.85)
-
-axis(side=2, las=1,
-     at=(c(5,7.5,10,12.5,15,17.5)-mean(mixed.site.sub$tmin.annual))/
-       sd(mixed.site.sub$tmin.annual),
-     labels=c(5,7.5,10,12.5,15,17.5))
-mtext(side=2, text=expression("Min temp ("*degree*"C)"), line=1.25, las=0)
-
-mtext(side=3, at=relative.axis.point(0, "x"), text="(c)", font=2, line=0, cex=1.25)
-box()
-close.screen(3)
-
-screen(4)
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.02, mgp=c(3,0.4,0))
-temp.inter.list<-interaction.matrix.fun(trait.env.model.nomono, 
-                                        "SM.cwm", "log.density",
-                                        grid.size=150, quantile=0.025)
-image(temp.inter.list, zlim=c(8.4,12.3),
-      col=colorRampPalette(c(rgb(0.95,1,0.95,1),"darkseagreen1","darkgreen"))(150), axes=F, las=1)
-
-#with(trait.env.model.nomono$data, points(log.density ~ SM.cwm))
-
-contour(x=temp.inter.list,add=T, 
-        levels=log(c(25, 50, 75, 100, 125, 150)*1000),
-        labels=c(25, 50, 75, 100, 125, 150),
-        method="edge", lwd=0.5)
-
-axis(side=1, mgp=c(3,0,0), at=(c(0,1,2,3)-mean(mixed.site.sub$SM.cwm))/
-                               sd(mixed.site.sub$SM.cwm),
-     labels=c(0,1,2,3))
-mtext(side=1, text="ln(Seed mass (mg)) CWM", line=0.85)
-
-axis(side=2, at=(log(c(250,1000,2500,5000))-mean(mixed.site.sub$log.density, na.rm=TRUE))/sd(mixed.site.sub$log.density, na.rm=TRUE),
-     labels=c(0.25,1,2.5,5))
-mtext(side=2, text=expression("Density (stems"^3*" ha"^"-1"*")"),
-      line=1.25, las=0)
-
-mtext(side=3, at=relative.axis.point(0, "x"), text="(d)", font=2, line=0, cex=1.25)
-box()
-close.screen(4)
-
-screen(5)
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.02, mgp=c(3,0.4,0))
-temp.inter.list<-interaction.matrix.fun(trait.env.model.nomono, 
-                                        "SM.cwm", "log.age",
-                                        grid.size=150, quantile=0.025)
-image(temp.inter.list, zlim=c(8.4,12.3),
-      col=colorRampPalette(c(rgb(0.95,1,0.95,1),"darkseagreen1","darkgreen"))(150), axes=F, las=1)
-
-#with(trait.env.model.nomono$data, points(log.age ~ SM.cwm))
-
-contour(x=temp.inter.list,add=T, 
-        levels=log(c(25, 50, 75, 100, 125, 150)*1000),
-        labels=c(25, 50, 75, 100, 125, 150),
-        method="edge", lwd=0.5)
-
-axis(side=1, mgp=c(3,0,0), at=(c(0,1,2,3)-mean(mixed.site.sub$SM.cwm))/
-       sd(mixed.site.sub$SM.cwm),
-     labels=c(0,1,2,3))
-mtext(side=1, text="ln(Seed mass (mg)) CWM", line=0.85)
-
-axis(side=2, at=(log(c(5,10,15,25))-mean(mixed.site.sub$log.age))/sd(mixed.site.sub$log.age),
-     labels=c(5,10,15,25))
-mtext(side=2, text="Age (years)", line=1.25, las=0)
-mtext(side=3, at=relative.axis.point(0, "x"), text="(e)", font=2, line=0, cex=1.25)
-box()
-close.screen(5)
-
-
-screen(6)
-library(plotrix)
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.25, mgp=c(3,0.4,0))
-plot(x=NULL, y=NULL, xlim=c(0,1), ylim=c(8.4,12.3), xaxs="i", yaxs="i", axes=FALSE)
-
-colours<-colorRampPalette(c(rgb(0.95,1,0.95,1),"darkseagreen1","darkgreen"))(150)
-rect.coords<-seq(8.4, 12.3, length.out=150)
-
-lapply(2:length(rect.coords), function(x){
-  rect(xleft=0, xright=1, ytop=rect.coords[x], ybottom=rect.coords[x-1],
-       border=NA, col=colours[x])
-})
-axis(side=4, at=log(c(5, 10, 25, 50, 75, 100, 150, 200)*1000), 
-     labels=c(5, 10, 25, 50, 75, 100, 150, 200))
-mtext(side=4, text=expression("Planting biomass (t ha"^-1*")"), las=3, line=2)
-box()
-close.screen(6)
-
-#                             CLUSTER SLOPES ####
-
-# 
-plot.data<-trait.cluster.model.nomono$data
-
-screen(7) # SLA.cwm
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.02, mgp=c(3,0.4,0))
-with(plot.data, plot(residuals ~ SLA.cwm, pch=16,
-                     col="grey90",
-                     axes=FALSE, xlab="", ylab=""))
-box()
-axis(side=2)
-     
-axis(side=1, mgp=c(3,0.2,0), at=(c(1:4)-mean(mixed.site.sub$SLA.cwm))/
-       sd(mixed.site.sub$SLA.cwm),
-     labels=1:4)
-
-mtext(side=1, text=expression("ln(SLA (mm"^"2"*" g"^"-1"*")) CWM"), 
-      line=1.1)
-mtext(side=2, text="Biomass residuals", line=1.5, las=0)
-
-text(x=relative.axis.point(0.065, "x"), 
-     y=relative.axis.point(0.93, "y"),
-      labels="(f)", font=2, cex=1.25)
-
-for (i in 1:length(unique(plot.data$best.cluster.fact))){
-  
-cluster.data.sub<-plot.data[plot.data$best.cluster.fact==i,]
-cluster.random<-data.frame(planting=plot.data$planting, 
-                           IBRAsub=plot.data$IBRAsub)
-
-cluster.random<-cluster.random[!duplicated(cluster.random$planting),]
-model.coefs<-colnames(attr(trait.cluster.model$terms, "factors"))
-model.coefs<-model.coefs[!grepl(":", model.coefs)]
-
-prediction.df<-as.data.frame(matrix(0, nrow=100, ncol=length(model.coefs)))
-colnames(prediction.df)<-model.coefs
-prediction.df[,"SLA.cwm"]=seq(min(cluster.data.sub[, "SLA.cwm"]),
-                      max(cluster.data.sub[, "SLA.cwm"]),
-                      length.out=100)
-prediction.df[,"best.cluster.fact"]=as.factor(i)
-
-predictions.temp<-predict(object=trait.cluster.model, 
-                          newdata=prediction.df, level=0, se.fit=TRUE)
-predictions<-list(fit=predictions.temp$fit,
-                  x=prediction.df[,1],
-                  se=predictions.temp$se)
-if(i==8){
-polygon(y=c(predictions$fit+1.96*predictions$se,
-            rev(predictions$fit-1.96*predictions$se),
-            predictions$fit[1]+1.96*predictions$se[1]),
-        x=c(predictions$x, rev(predictions$x), predictions$x[1]), 
-        col=with(cluster.df, rgb(0.47, 0.67, 0.46, 0.75)), 
-        border=NA)
-
-
-points(predictions$fit ~ predictions$x, type="l", lwd=2, 
-       col=with(cluster.df, rgb(red[i], green[i], blue[i], 1)))
-next
-}
-
-#polygon(y=c(predictions$fit+1.96*predictions$se,
-#              rev(predictions$fit-1.96*predictions$se),
-#              predictions$fit[1]+1.96*predictions$se[1]),
-#          x=c(predictions$x, rev(predictions$x), predictions$x[1]), 
-#          col=with(cluster.df, rgb(red[i], green[i], blue[i], 0.05)), 
-#        border=NA)
-
-  points(predictions$fit ~ predictions$x, type="l", lwd=2, lty="31",
-         col=with(cluster.df, rgb(red[i], green[i], blue[i], 0.75)))
-}
-close.screen(7)
-
-screen(8) # WD.cwm
-par(mar=c(0,0,0,0), ps=8, las=1, tck=-0.02, mgp=c(3,0.4,0))
-with(plot.data, plot(residuals ~ WD.cwm, pch=16,
-                     col="grey90",
-                     axes=FALSE, xlab="", ylab=""))
-box()
-axis(side=2, labels=NA)
-
-axis(side=1, mgp=c(3,0.2,0), at=(c(1:4)-mean(mixed.site.sub$WD.cwm))/
-       sd(mixed.site.sub$WD.cwm),
-     labels=1:4)
-
-mtext(side=1, text=expression("ln(Wood density (g cm"^"-3"*")) CWM"), 
-      line=1.1)
-text(x=relative.axis.point(0.065, "x"), 
-     y=relative.axis.point(0.93, "y"),
-     labels="(g)", font=2, cex=1.25)
-
-for (i in c(1,3:length(unique(plot.data$best.cluster.fact)),2)){
-  
-  cluster.data.sub<-plot.data[plot.data$best.cluster.fact==i,]
-  cluster.random<-data.frame(planting=plot.data$planting, 
-                             IBRAsub=plot.data$IBRAsub)
-  
-  cluster.random<-cluster.random[!duplicated(cluster.random$planting),]
-  model.coefs<-colnames(attr(trait.cluster.model$terms, "factors"))
-  model.coefs<-model.coefs[!grepl(":", model.coefs)]
-  
-  prediction.df<-as.data.frame(matrix(0, nrow=100, ncol=length(model.coefs)))
-  colnames(prediction.df)<-model.coefs
-  prediction.df[,"WD.cwm"]=seq(min(cluster.data.sub[, "WD.cwm"]),
-                                max(cluster.data.sub[, "WD.cwm"]),
-                                length.out=100)
-  prediction.df[,"best.cluster.fact"]=as.factor(i)
-  
-  predictions.temp<-predict(object=trait.cluster.model, 
-                            newdata=prediction.df, level=0, se.fit=TRUE)
-  predictions<-list(fit=predictions.temp$fit,
-                    x=prediction.df[,"WD.cwm"],
-                    se=predictions.temp$se)
-  
-  if(i==2){
-    polygon(y=c(predictions$fit+1.96*predictions$se,
-                rev(predictions$fit-1.96*predictions$se),
-                predictions$fit[1]+1.96*predictions$se[1]),
-            x=c(predictions$x, rev(predictions$x), predictions$x[1]), 
-            col=with(cluster.df, rgb(0.74, 0.94, 0.53, 0.85)), 
-            border=NA)
-
-    points(predictions$fit ~ predictions$x, type="l", lwd=2,
-           col=with(cluster.df, rgb(red[i], green[i], blue[i], 1)))
-    next
-  }
-  
-   points(predictions$fit ~ predictions$x, type="l", lwd=2, lty="31",
-         col=with(cluster.df, rgb(red[i], green[i], blue[i], 0.75)))
-}
-close.screen(8)
-
-screen(9)
-par(mar=c(0,0,0,0))
-box(lwd=1.5)
-close.screen(9)
-close.screen(all.screens=TRUE)
-
-dev.off()
-
- ####
-
 #             FUNCTIONAL DIVERSITY REGRESSION SLOPES ####
 summary(fun.div.env)
 plot.data<-fun.div.env$data
@@ -4217,8 +3850,6 @@ write.csv(cor(mixed.site.sub.multi[,c("rare.rich", "FRv","FEm","FDm",
     use="complete.obs")[-c(1:4),1:4],
     "./Outputs/correlation matrix for presentation.csv")
 
-# ####
-# MODELLING - PNAS REVISIONS ####
 #             LOOK FOR NEARBY FIRES ####
 head(mixed.site.sub)
 rain<-raster("/home/Storage HDD/University files/Shape files/prec.annual.tif")
@@ -4584,5 +4215,3 @@ axis(side=2, at=log(c(seq(0.01,0.1,0.01), seq(0.1,1,0.1), seq(1,10,1),
                       seq(10,100,10), seq(100,1000,100), seq(1000,10000,1000))),
      labels=NA, tck=-0.025)
 
-
-# ####
