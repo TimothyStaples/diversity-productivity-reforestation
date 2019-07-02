@@ -19,7 +19,7 @@ Trait values are available as .csv files containing species means. They are loca
 
 **R scripts** Two scripts are provided in this repository, along with summarised data used for for the statistical models and analyses in the manuscript. These scripts makes extensive use of the code folding functionality in R-studio (Alt + O is the default shortcut on Window and Linux machines to collapse all folds).
 
-**reproduce-results.R** is a minimum working script that contains all of the data and analyses to produce the figures and tables found in the manuscript. It does not, in most cases, show how the raw data was transformed from the raw functional trait and forest inventory data. It makes use of files in the "Data" and "Functions" sub-folder, so please point your working directory to the location of this script and include all other directories in the repository.
+**reproduce-results.R** is a minimum working script that contains all of the data and analyses to produce the figures and tables found in the manuscript. It does not, in most cases, show how the raw data were transformed from the raw functional trait and forest inventory data. It makes use of files in the "Data" and "Functions" sub-folder, so please point your working directory to the location of this script and include all other directories in the repository.
 
 **full-processing-and-analysis.R** shows the complete data analysis pathway, but will require the
 raw forest inventory and functional trait data acquired and aggregated by the authors of this publication. These are not provided here. This script is provided for transparency and reproducibility, that data processing steps are fully documented.
